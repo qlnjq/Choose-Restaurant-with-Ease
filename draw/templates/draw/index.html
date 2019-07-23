@@ -31,7 +31,7 @@
 // //     console.log(split);
 //     size = split[1];
 //     console.log(size);
-  
+    
     var socket = new WebSocket('wss://p3-websockets-qlnjq-jach866608.codeanyapp.com/ws/draw');
     
     var date = new Date();
@@ -53,12 +53,14 @@
     });
   
     tool.onMouseMove = function(event){
+      
         var pointx = event.point.x;
         var pointy = event.point.y;
         line.add(event.point); //add to client page, not sent to server yet
 //         line.add(new paper.Point(pointx, pointy)); //initial point;
 //         console.log(line.strokeColor);
         var jsonPoint = JSON.stringify( {'x': pointx, 'y': pointy, 'currUser': user, 'currColor': line.strokeColor._canvasStyle} );
+//         compareThreshold();
         socket.send(jsonPoint); // client send to server
     };
   
@@ -83,7 +85,52 @@
     // use when sending a message to the server
     // to be broadcasted to all clients, please add a delay
 //     socket.onopen = () => socket.send(JSON.stringify(..);
+    var threshold = 10;
+    var iX, iY, aX, aY, iZ, aZ, diff,g = 0;
+  
+    // https://developers.arcgis.com/javascript/3/jssamples/mobile_shake.html;
+    window.addEventListener('devicemotion', (event) => {
+      aX = event.accelerationIncludingGravity.x;
+      aY = event.accelerationIncludingGravity.y;
+      aZ = event.accelerationIncludingGravity.z;
+      compareThreshold();
+    });
+  
+    function compareThreshold(){
+      diff = Math.abs(aX - iX + aY - iY + aZ - iZ);
+//       console.log("diff: " + diff);
+      if (diff > threshold){
+        if (line != null) {
+          var saveColor = line.strokeColor._canvasStyle;
+        }
+        var context = canvas.getContext('2d');
+//         context.clearRect(0, 0, canvas.width, canvas.height); // does not clear?? because not canvas paths but paper paths...?
+//         users[user].remove();
+//         paper.project.clear();
+        paper.project.activeLayer.removeChildren();
+//         paper.view.draw();
+//         line.remove();
+        line = new paper.Path({
+              strokeColor: saveColor,
+              strokeWidth: 3});
+        
+//         paper.setup(canvas);
+//         users[user] = new paper.Path({
+//             strokeColor: saveColor(),
+//             strokeWidth: 3,
+//         });
+      }
+      
+      iX = aX;
+      iY = aY;
+      iZ = aZ;
+    }
 
+    window.addEventListener('deviceorientation', (event) => {
+        if ((event.gamma - g) > 40) //change the stroke color
+           line.strokeColor = paper.Color.random(); // color() is too funky
+           users[user].strokeColor._canvasStyle = line.strokeColor._canvasStyle;
+    });
     // notify console if socket closes unexpectedly
     socket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
