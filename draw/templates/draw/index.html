@@ -70,7 +70,7 @@
          var currUser = receivedInfo.currUser;
 //          var currColor = receivedInfo.currColor; 
  
-         if (size == 'large'){ // multiple lines
+         if (size != 'small'){ // multiple lines
              if (!(currUser in users)){
                users[currUser] = new paper.Path();
                users[currUser].strokeColor = receivedInfo.currColor;
