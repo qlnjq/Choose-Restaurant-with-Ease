@@ -19,7 +19,6 @@
     <canvas id="myCanvas" width="750px" height="750px"></canvas>
 </body>
 <script>
-
     // setting up the canvas and one paper tool
     var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
@@ -30,35 +29,38 @@
     
     var date = new Date();
     var seconds = date.getSeconds();
+    var user = Date.now();
+//     var users = {};
   
-    function color(){ // gives rgb
-      var currColor = "";
-      while(currColor.length < 3){
+    function color(){
+      var currColor = '';
+      while(currColor.length < 6){
         currColor += Math.floor(Math.random() * seconds).toString(16);
       }
-      return "#" + currColor;
-    } 
+      return '#' + currColor;
+    }
   
     var line = new paper.Path({
-            strokeColor: 'blue',
-            strokeWidth: 20,
+            strokeColor: color(),
+            strokeWidth: 3,
     });
-
-    tool.onmousemove = function(event){
+  
+    tool.onMouseMove = function(event){
         var pointx = event.point.x;
         var pointy = event.point.y;
-        line.add(new paper.Point(pointx, pointy));
-        var jsonPoint = JSON.stringify( {x: pointx, y: pointy} );
+//         line.add(new paper.Point(pointx, pointy)); //initial point;
+        var jsonPoint = JSON.stringify( {'x': pointx, 'y': pointy} );
         socket.send(jsonPoint); // client send to server
     };
   
     // triggered when receiving a message from the server
     socket.onmessage = function(receivedMessage) {
+         
          var pointx = JSON.parse(receivedMessage.data).x;
          var pointy = JSON.parse(receivedMessage.data).y;
          line.add(new paper.Point(pointx, pointy));
     };
-
+  
     // use when sending a message to the server
     // to be broadcasted to all clients, please add a delay
 //     socket.onopen = () => socket.send(JSON.stringify(..);
@@ -67,7 +69,6 @@
     socket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
-
 
 
 </script>
