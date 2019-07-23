@@ -127,9 +127,12 @@
     }
 
     window.addEventListener('deviceorientation', (event) => {
-        if ((event.gamma - g) > 40) //change the stroke color
+        if ((event.gamma - g) > 40){ //change the stroke color
            line.strokeColor = paper.Color.random(); // color() is too funky
-           users[user].strokeColor._canvasStyle = line.strokeColor._canvasStyle;
+//            if (users[user] != null) {
+             users[user].strokeColor._canvasStyle = line.strokeColor._canvasStyle;
+//            }
+        }
     });
     // notify console if socket closes unexpectedly
     socket.onclose = function(e) {
