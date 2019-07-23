@@ -24,12 +24,51 @@
     var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
     var tool = new paper.Tool();
+//     var point = {};
+    var line;
+    var firstPoint = 1;
+  
+    tool.onmousemove = function(event){
+//       point = new paper.Point(event.point);
+//       line.add(point);
+      var point = {};
+      point.x = event.point.x;
+      point.y = event.point.y;
+      var jsonPoint = JSON.stringify(point);
+      socket.send(jsonPoint); // client send to server
+    }
 
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
 
-    // var socket = new WebSocket(
-    //     'wss://<your url here>/ws/draw');
+    var socket = new WebSocket('wss://p3-websockets-qlnjq-jach866608.codeanyapp.com/ws/draw');
+  
+    // triggered when receiving a message from the server
+    socket.onmessage = function(e) {
+      // do something when you receive a message, you as a client
+//       console.log("helloooo : " + e.data);
+//          JSON.parse(e.data);//JSON.parse() takes a JSON string and transforms it into a JavaScript object.
+         var pointx = JSON.parse(e.data).x;
+         var pointy = JSON.parse(e.data).y;
+//          var thisPoint = new paper.Point(linex, liney);
+          if (firstPoint == 1){
+            line = new paper.Path({
+                    strokeColor: 'black'
+                    });
+            firstPoint = 0;
+          }
+          line.add(pointx, pointy);
+    };
+
+    // use when sending a message to the server
+    // to be broadcasted to all clients, please add a delay
+//     socket.onopen = () => socket.send(JSON.stringify(..);
+
+    // notify console if socket closes unexpectedly
+    socket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
 
 
 </script>
