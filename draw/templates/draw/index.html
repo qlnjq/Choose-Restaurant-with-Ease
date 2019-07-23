@@ -30,7 +30,7 @@
     var date = new Date();
     var seconds = date.getSeconds();
     var user = Date.now();
-//     var users = {};
+    var users = {};
   
     function color(){
       var currColor = '';
@@ -40,25 +40,33 @@
       return '#' + currColor;
     }
   
-    var line = new paper.Path({
-            strokeColor: color(),
-            strokeWidth: 3,
-    });
+//     var line = new paper.Path({
+// //             strokeColor: color(),
+//             strokeWidth: 3,
+//     });
   
     tool.onMouseMove = function(event){
         var pointx = event.point.x;
         var pointy = event.point.y;
 //         line.add(new paper.Point(pointx, pointy)); //initial point;
-        var jsonPoint = JSON.stringify( {'x': pointx, 'y': pointy} );
+        var jsonPoint = JSON.stringify( {'x': pointx, 'y': pointy, 'currUser': user, 'currColor': color()} );
         socket.send(jsonPoint); // client send to server
     };
   
     // triggered when receiving a message from the server
     socket.onmessage = function(receivedMessage) {
+         var receivedInfo = JSON.parse(receivedMessage.data);
+         var pointx = receivedInfo.x;
+         var pointy = receivedInfo.y;
+         var currUser = receivedInfo.currUser;
+//          var currColor = receivedInfo.currColor; 
          
-         var pointx = JSON.parse(receivedMessage.data).x;
-         var pointy = JSON.parse(receivedMessage.data).y;
-         line.add(new paper.Point(pointx, pointy));
+         if (!(currUser in users)){
+           users[currUser] = new paper.Path();
+           users[currUser].strokeColor = receivedInfo.currColor;
+           users[currUser].strokeWidth = 3;
+         }
+           users[currUser].add(new paper.Point(pointx, pointy));
     };
   
     // use when sending a message to the server
