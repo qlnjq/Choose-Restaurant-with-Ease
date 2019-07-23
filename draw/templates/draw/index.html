@@ -24,40 +24,39 @@
     var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
     var tool = new paper.Tool();
-//     var point = {};
-    var line;
-    var firstPoint = 1;
-  
-    tool.onmousemove = function(event){
-//       point = new paper.Point(event.point);
-//       line.add(point);
-      var point = {};
-      point.x = event.point.x;
-      point.y = event.point.y;
-      var jsonPoint = JSON.stringify(point);
-      socket.send(jsonPoint); // client send to server
-    }
-
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
-
     var socket = new WebSocket('wss://p3-websockets-qlnjq-jach866608.codeanyapp.com/ws/draw');
+    
+    var date = new Date();
+    var seconds = date.getSeconds();
+  
+    function color(){ // gives rgb
+      var currColor = "";
+      while(currColor.length < 3){
+        currColor += Math.floor(Math.random() * seconds).toString(16);
+      }
+      return "#" + currColor;
+    } 
+  
+    var line = new paper.Path({
+            strokeColor: 'blue',
+            strokeWidth: 20,
+    });
+
+    tool.onmousemove = function(event){
+        var pointx = event.point.x;
+        var pointy = event.point.y;
+        line.add(new paper.Point(pointx, pointy));
+        var jsonPoint = JSON.stringify( {x: pointx, y: pointy} );
+        socket.send(jsonPoint); // client send to server
+    };
   
     // triggered when receiving a message from the server
-    socket.onmessage = function(e) {
-      // do something when you receive a message, you as a client
-//       console.log("helloooo : " + e.data);
-//          JSON.parse(e.data);//JSON.parse() takes a JSON string and transforms it into a JavaScript object.
-         var pointx = JSON.parse(e.data).x;
-         var pointy = JSON.parse(e.data).y;
-//          var thisPoint = new paper.Point(linex, liney);
-          if (firstPoint == 1){
-            line = new paper.Path({
-                    strokeColor: 'black'
-                    });
-            firstPoint = 0;
-          }
-          line.add(pointx, pointy);
+    socket.onmessage = function(receivedMessage) {
+         var pointx = JSON.parse(receivedMessage.data).x;
+         var pointy = JSON.parse(receivedMessage.data).y;
+         line.add(new paper.Point(pointx, pointy));
     };
 
     // use when sending a message to the server
