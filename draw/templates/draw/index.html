@@ -14,7 +14,7 @@
 
     <style type="text/css">
       body {
-        background-color: "LightGreen";
+        background-color: #A5C4FA;
       }
       
       .choosefirstchoice {
@@ -25,23 +25,19 @@
         align-content: center;
       }
       
-      .title {
+      .title, h1, h3 {
         margin-top: 15%;
         text-align: center;
+        background-color: #F4F8FE;
       }
-      
-/*       .personno {
-        text-align: center;
-        color: "black";
-        font-size: px;
-      } */
       
       .list-food {
         padding-left: 43%;
 /*         color: "" */
 /*         font-size: px; */
-        
+        background-color: #F4F8FE;
       }
+      
       
       #first-choice {
         width: 22%;
@@ -49,6 +45,16 @@
         justify-content: space-between; /* information/content inside that line*/
         align-items: center;
         align-content: space-around;
+/*         background-color: #F4F8FE; */
+      }
+      
+      #second-choice {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        align-content: center;
+        background-color: #F4F8FE;
       }
     </style>
 
@@ -129,21 +135,23 @@ oke
     
   </div>
     <div class = "second-filter" style = "display:none">  
-     <form>
-        <h3>Select your favorite foods:</h3>
-        <label><input type="checkbox" value="sushi" name="food"> sushi</label>
-        <label><input type="checkbox" value="curry" name="food"> curry</label>
-        <label><input type="checkbox" value="meatball" name="food"> meatball</label>
-        <label><input type="checkbox" value="tofu" name="food"> tofu</label>
-        <label><input type="checkbox" value="friedrice" name="food"> friedrice</label>
-        <label><input type="checkbox" value="spaghetti" name="food"> spaghetti</label>
-        <br>
-        <button type="button" id = secondSubmit>Get Values</button>
-    </form>
-    <h1 id="topfood">
-       ????
-    </h1>
+      <h3>Select Your Favorite Foods:</h3>
+      <form id = "second-choice">
+          <div id = "foodlist">
+              <input type="checkbox" value="sushi" name="food"> sushi
+              <input type="checkbox" value="curry" name="food"> curry
+              <input type="checkbox" value="meatball" name="food"> meatball
+              <input type="checkbox" value="tofu" name="food"> tofu
+              <input type="checkbox" value="friedrice" name="food"> friedrice
+              <input type="checkbox" value="spaghetti" name="food"> spaghetti
+          </div>  
   
+           <button type="button" id = secondSubmit>Get Values</button>
+      </form>
+    <h1 id="topfood">
+       ???? 
+    </h1>
+
   </div>
   </body>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -176,44 +184,6 @@ oke
           console.log("message ")
       });
       
-            //if large
-//       if (url.indexOf('large') !== -1 ) {
-//        socket.onmessage = function(receivedMessage) {
-//          console.log("here it gets real")
-//          let msg = JSON.parse(receivedMessage.data);
-//          console.log(msg)
-//          if (msg.id in dictMe){
-//           dictMe[msg.id] = []
-//           dictMe[msg.id].push(msg.food1)
-//           dictMe[msg.id].push(msg.food2)
-//          }else{
-//           dictMe[msg.id] = []
-//           dictMe[msg.id].push(msg.food1)
-//           dictMe[msg.id].push(msg.food2)  
-//          } 
-         
-
-//           var counterMeFood = {}
-//           //get the top food
-//           for (var id in dictMe){
-//              for (var i = 0; i < 2; i++) {
-//                counterMeFood[dictMe[id][i]] = (counterMeFood[dictMe[id][i]] || 0) + 1;
-//             }
-//           }
-//          console.log(counterMeFood)
-//          maxFood = "";
-//          maxCounter = 0;
-//           for (var id in counterMeFood){
-//             console.log(id)
-//             if (counterMeFood[id] > maxCounter){
-//               maxFood = id
-//               maxCounter = counterMeFood[id]
-//             }
-//           }
-//           $("#topfood").html(maxFood)
-//        } 
-//       };
-      
       
 //        ..first filtering 
 //        https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio
@@ -224,20 +194,18 @@ oke
 
         //first-filtering
         function openPage() {
-          let msg = {page: "first", id: id};
+          let msg = {page: "first", id: id, numbPpl:numbPpl};
           console.log(msg);
           socket.onopen = () => socket.send(JSON.stringify(msg)); // tell server that a new user comes in //???
-          console.log("userid = " + id);
         }
 
       openPage();
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
-        console.log("radiovalue = " + radioValue);
         dictMe[id] = true;
-        console.log("line 241: id %s in dictMe = %s ", id, dictMe[id]);
-        let msg = {page: "first", fc: radioValue, id: id};
+//         console.log("#firstSubmit: numbPpl = %s", numbPpl);
+        let msg = {page: "first", fc: radioValue, id: id, numbPpl: numbPpl};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
       });
@@ -249,22 +217,44 @@ oke
         if (msg.page == "first") {
           if (!(msg.id in dictMe)){
             dictMe[msg.id] = false;
-            console.trace();
-            console.log("id should not be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
-          } else if (typeof msg.fc !== 'underfined'){ // check if submit button is pressed
-              firstChoice.push(msg.fc); // save first-choice-food into array
+            let lineNo = ((new Error().stack).toString().split(':'))[2];
+//             console.log("line %s: id %s should not be in dictMe = %s ",lineNo, msg.id, dictMe[msg.id]);
+          } else if (typeof msg.fc !== 'undefined'){ // check if submit button is pressed
+              let lineNo2 = ((new Error().stack).toString().split(':'))[2];
+//               console.log("line %s: msg.fc",lineNo2, msg.fc);
+            
+              if (msg.save != true)
+                firstChoice.push(msg.fc); // save first-choice-food into array
+            
               console.log("firstChoice length = " + firstChoice.length);
-              console.trace();
-              console.log("id should be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
+              let lineNo = ((new Error().stack).toString().split(':'))[2];
+//               console.log("line %s: id %s should be in dictMe = %s ",lineNo, msg.id, dictMe[msg.id]);
 
-              if (firstChoice.length >= numbPpl){
+//               console.log("266: msg.numbPpl = " + msg.numbPpl);
+              if ((firstChoice.length >= msg.numbPpl) && (msg.numbPpl >= 0)){
                 console.log("switch page to second filter");
+                
+                
+                var arrayLength = firstChoice.length;
+                
+                console.log(firstChoice)
+                for (var i = 0; i < arrayLength; i++) {
+                  addFood(firstChoice.shift());
+                  
+                }
+
                 $('.first-filter').hide();
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
                 // transfer page
               } else if (dictMe[msg.id] == true){ // wait for other incoming messages
                 console.log("msg.id = " + msg.id);
+                msg.numbPpl--; // keep sending
+                numbPpl = msg.numbPpl;
+                console.log("waiting page");
+                console.log("numbPpl = " + numbPpl);
+                console.log("msg.numbPpl = " + msg.numbPpl);
+                socket.send(JSON.stringify({page: "first", id: msg.id, numbPpl: msg.numbPpl, save: true})); /// fc: msg.fc,
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
@@ -290,14 +280,37 @@ oke
            maxCounter = 0;
             for (var id in counterMeFood){
               console.log(id)
-              if ((id !== 'undefined') && (counterMeFood[id] > maxCounter )){
+              if ((id !== 'undefined') && (counterMeFood[id] > maxCounter)){
                 maxFood = id
                 maxCounter = counterMeFood[id]
               }
             }
-            $("#topfood").html(maxFood)
+            $("#topfood").html("The Top Food Selected is: " + maxFood)
           }
       };
+      
+      
+      function addFood(newName) {
+
+          var checkbox = document.createElement('input');
+          checkbox.type = "checkbox";
+          checkbox.name = "food";
+          checkbox.value = newName;
+
+          var label = document.createElement('label')
+          label.htmlFor = "id";
+          label.appendChild(document.createTextNode(newName));
+
+
+          $('#foodlist').append(checkbox);
+          $('#foodlist').append(label);
+      };
+
+      
+      
+      
+      
+      
       
 //     // notify console if socket closes unexpectedly
 //     socket.onclose = function(e) {
