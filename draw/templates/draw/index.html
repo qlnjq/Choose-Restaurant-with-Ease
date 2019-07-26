@@ -175,7 +175,6 @@ oke
           $.each($("input[name='food']:checked"), function(){
               favorite.push($(this).val());
           });
-          alert("My two favourite food are: " + favorite.join(", "));
           let msg = {page: "second", id:id,food1:favorite[0],food2:favorite[1]} //let is block-scoped
           socket.send(JSON.stringify(msg));
           console.log("message ")
@@ -191,7 +190,7 @@ oke
 
         //first-filtering
         function openPage() {
-          let msg = {page: "first", id: id, numbPpl:numbPpl};
+          let msg = {page: "first",id:id};
           console.log(msg);
           socket.onopen = () => socket.send(JSON.stringify(msg)); // tell server that a new user comes in //???
         }
@@ -200,7 +199,6 @@ oke
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
-//         console.log("#firstSubmit: numbPpl = %s");
         let msg = {page: "first", fc: radioValue, id: id};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
@@ -209,52 +207,36 @@ oke
       // gather information
       socket.onmessage = function(receivedMessage){
         let msg = JSON.parse(receivedMessage.data);
-
+       
         if (msg.page == "first") {
-					
-          if (!(msg.id in dictMe)) {
-						dictMe[msg.id] = true;
-            console.log("saved id");
-					}
-					
-          if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
+            if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
             
-//               if (msg.save != true){
-                firstChoice.push(msg.fc); // save first-choice-food into array
-//               }
-							let dictMeLen = Object.keys(dictMe).length;
-              if (dictMeLen == numbPpl){
+              
+              firstChoice.push(msg.fc); // save first-choice-food into array
+							console.log(firstChoice)
+              if (firstChoice.length >= numbPpl){
                 console.log("switch page to second filter");
                 
-                var arrayLength = firstChoice.length;
                 
                 console.log(firstChoice)
-                var set = new Set(firstChoice)
-//                 console.log(set)
-//                 for (var food in set) {
-//                   console.log(food)
-//                   addFood(food);
-//                 }
                 
-                for (var i = 0; i < firstChoice.length; i++) {
-                    addFood(firstChoice.shift())
+                var set = new Set(firstChoice)                
+                for(var food of set){
+                  addFood(food)
                 }
 
                 $('.first-filter').hide();
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
                 // transfer page
-              } else if (dictMe[msg.id] == true) { // wait for other incoming messages
-//                 socket.send(JSON.stringify({page: "first", numbPpl: dictMe[msg.id][1], id: msg.id, save: true})); /// fc: msg.fc,
+              } else{
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
             }
-//           }
         } else { // second page
            console.log("here it gets real")
-//         
-          //COMMAND ZZZzZZZZZZZZ... undoooooooooooooo    let msg = JSON.parse(receivedMessage.data);
+//             let msg = JSON.parse(receivedMessage.data);
 
             dictMe[msg.id] = []
             dictMe[msg.id].push(msg.food1)
