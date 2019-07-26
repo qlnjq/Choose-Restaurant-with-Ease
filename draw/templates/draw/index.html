@@ -199,21 +199,28 @@ oke
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
+        console.log("radiovalue = " + radioValue);
+        dictMe[id] = true;
+        console.log("line 241: id %s in dictMe = %s ", id, dictMe[id]);
         let msg = {page: "first", fc: radioValue, id: id};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
       });
-      
+
       // gather information
       socket.onmessage = function(receivedMessage){
         let msg = JSON.parse(receivedMessage.data);
        
-        if (msg.page == "first") {
-            if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
-            
-              
+				if (msg.page == "first") {
+          if (!(msg.id in dictMe)){
+            dictMe[msg.id] = false;
+            console.trace();
+            console.log("id should not be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
+          } else if (typeof msg.fc !== 'underfined'){ // check if submit button is pressed
               firstChoice.push(msg.fc); // save first-choice-food into array
-							console.log(firstChoice)
+              console.log("firstChoice length = " + firstChoice.length);
+              console.trace();
+              console.log("id should be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
               if (firstChoice.length >= numbPpl){
                 console.log("switch page to second filter");
                 
@@ -229,7 +236,8 @@ oke
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
                 // transfer page
-              } else{
+              } else if (dictMe[msg.id] == true){ // wait for other incoming messages
+                console.log("msg.id = " + msg.id);
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
@@ -237,7 +245,6 @@ oke
         } else { // second page
            console.log("here it gets real")
 //             let msg = JSON.parse(receivedMessage.data);
-
             dictMe[msg.id] = []
             dictMe[msg.id].push(msg.food1)
             dictMe[msg.id].push(msg.food2)  
