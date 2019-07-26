@@ -138,12 +138,7 @@ oke
       <h3>Select Your Favorite Foods:</h3>
       <form id = "second-choice">
           <div id = "foodlist">
-              <input type="checkbox" value="sushi" name="food"> sushi
-              <input type="checkbox" value="curry" name="food"> curry
-              <input type="checkbox" value="meatball" name="food"> meatball
-              <input type="checkbox" value="tofu" name="food"> tofu
-              <input type="checkbox" value="friedrice" name="food"> friedrice
-              <input type="checkbox" value="spaghetti" name="food"> spaghetti
+
           </div>  
   
            <button type="button" id = secondSubmit>Get Values</button>
@@ -158,6 +153,14 @@ oke
     <script type="text/javascript">
     $(document).ready(()=>{  
       
+     $('input[type=checkbox]').on('change', function (e) {
+          console.log("asdfasdfasdfasdf")
+          if ($('input[type=checkbox]:checked').length > 2) {
+              $(this).prop('checked', false);
+              alert("Please only select your top two choices");
+          }
+      });
+      
      //create unique id
      var id = Math.floor(Math.random() * 10000) + 1 // don't delete this
      var dictMe = {}; // nor this
@@ -166,12 +169,6 @@ oke
     //initialize the socket  
     var socket = new WebSocket('wss://Choose-Restaurant-with-Ease-jach866608.codeanyapp.com/ws/draw');
 
-      $('input[type=checkbox]').on('change', function (e) {
-          if ($('input[type=checkbox]:checked').length > 2) {
-              $(this).prop('checked', false);
-              alert("Please only select your top two choices");
-          }
-      });
             
       $("#secondSubmit").click(function(){
           var favorite = [];
@@ -203,9 +200,10 @@ oke
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
-        dictMe[id] = true;
-//         console.log("#firstSubmit: numbPpl = %s", numbPpl);
-        let msg = {page: "first", fc: radioValue, id: id, numbPpl: numbPpl};
+        dictMe[id][0] = true;
+        numbPpl--;
+        console.log("#firstSubmit: numbPpl = %s", numbPpl);
+        let msg = {page: "first", fc: radioValue, id: id, numbPpl: numbPpl, save: false};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
       });
@@ -215,49 +213,42 @@ oke
         let msg = JSON.parse(receivedMessage.data);
        
         if (msg.page == "first") {
-          if (!(msg.id in dictMe)){
-            dictMe[msg.id] = false;
-            let lineNo = ((new Error().stack).toString().split(':'))[2];
-//             console.log("line %s: id %s should not be in dictMe = %s ",lineNo, msg.id, dictMe[msg.id]);
-          } else if (typeof msg.fc !== 'undefined'){ // check if submit button is pressed
-              let lineNo2 = ((new Error().stack).toString().split(':'))[2];
-//               console.log("line %s: msg.fc",lineNo2, msg.fc);
+          if (!(msg.id in dictMe)) {
             
-              if (msg.save != true)
+            dictMe[msg.id] = [];
+            dictMe[msg.id].push(true);
+            dictMe[msg.id].push(msg.numbPpl);
+            console.log("saved id");
+            
+          } else { // if id is already saved
+            dictMe[msg.id][1] = msg.numbPpl;
+            
+            if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
+            
+              if (msg.save != true){
                 firstChoice.push(msg.fc); // save first-choice-food into array
-            
-              console.log("firstChoice length = " + firstChoice.length);
-              let lineNo = ((new Error().stack).toString().split(':'))[2];
-//               console.log("line %s: id %s should be in dictMe = %s ",lineNo, msg.id, dictMe[msg.id]);
-
-//               console.log("266: msg.numbPpl = " + msg.numbPpl);
-              if ((firstChoice.length >= msg.numbPpl) && (msg.numbPpl >= 0)){
+              }
+							
+              if ((firstChoice.length > dictMe[msg.id][1]) && (dictMe[msg.id][1] >= 0)){
                 console.log("switch page to second filter");
-                
                 
                 var arrayLength = firstChoice.length;
                 
                 console.log(firstChoice)
                 for (var i = 0; i < arrayLength; i++) {
                   addFood(firstChoice.shift());
-                  
                 }
 
                 $('.first-filter').hide();
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
                 // transfer page
-              } else if (dictMe[msg.id] == true){ // wait for other incoming messages
-                console.log("msg.id = " + msg.id);
-                msg.numbPpl--; // keep sending
-                numbPpl = msg.numbPpl;
-                console.log("waiting page");
-                console.log("numbPpl = " + numbPpl);
-                console.log("msg.numbPpl = " + msg.numbPpl);
-                socket.send(JSON.stringify({page: "first", id: msg.id, numbPpl: msg.numbPpl, save: true})); /// fc: msg.fc,
+              } else if (dictMe[msg.id][0] == true) { // wait for other incoming messages
+                socket.send(JSON.stringify({page: "first", numbPpl: dictMe[msg.id][1], id: msg.id, save: true})); /// fc: msg.fc,
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
+            }
           }
         } else { // second page
            console.log("here it gets real")
@@ -305,11 +296,13 @@ oke
           $('#foodlist').append(checkbox);
           $('#foodlist').append(label);
       };
+      
+      
 
+
+           
       
-      
-      
-      
+ 
       
       
 //     // notify console if socket closes unexpectedly
