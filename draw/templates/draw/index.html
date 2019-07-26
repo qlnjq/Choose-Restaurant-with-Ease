@@ -7,7 +7,7 @@
     <title>Choose Restaurant with Ease</title>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
+	
 <!--     <script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -17,7 +17,7 @@
         background-color: #A5C4FA;
       }
       
-      .choosefirstchoice {
+      .first-filter-text {
         height: 100%;
         display: flex;
         justify-content: center;
@@ -39,7 +39,7 @@
       }
       
       
-      #first-choice {
+      #first-choice, .menu{
         width: 22%;
         display: flex; /* makes them all in one line after each other*/
         justify-content: space-between; /* information/content inside that line*/
@@ -66,17 +66,12 @@ hahhaha ya we can do that
 but how do you let the websocket stay connected in that case?
 i think i saww sb asking on piazza
 LLOl so complicated can we make new page for 2nd
-
 Yeha i don tknow how this django thing works let me see
 Give me the link to this page PLEASE
-
 https://piazza.com/class/jux2cw25k294wq?cid=402
-
-
 I need the index.html file lOL... 
 this is the index,html
 Yeah i want to try" stuff.. it'l get messy if i do it here
-
 ok nw just do it its fine
 oke
 -->
@@ -100,9 +95,34 @@ oke
       PLEASE WAIT FOR OTHERS TO COMPLETE
     </p>
   </div>
+	
+	<div class = "variant-select" style = "padding: 20%">
+    <p style = "font-size: 50px; text-align: center">
+      <button type="button" name = "v-checkbox" id = vcheck style = "margin-top: 5%"> Checkbox </button>
+			<button type="button" name = "v-type" id = vtype style = "margin-top: 5%"> Type </button>
+    </p>
+  </div>
+	
+	<div class = "first-filter-text" style = "display:none;">
+    <div class = "title">
+      <p style = "font-size: 45px">
+        What do you want to eat?
+      </p>
+      <p style = "font-size: 17px">
+        Type the <span style = "font-weight: bold; font-size: 17px">food</span> you crave the most!
+      </p>
+    </div>
+		
+		<div class = "first-type" style = "width: 100%; margin-top: 20px; margin-left: 35%;">
+			<form>
+				<input type="text" name="typed-food" id = "firsttext"><br>
+			</form>
+		</div>
+		<button type="button" name = "first-text" id = first-text style = "margin-top: 5%"> Submit </button>
+	</div>
   
 <!--   choose first choice === first selection page -->
-  <div class = "first-filter">
+  <div class = "first-filter" style = "display: none">
     <div class = "title">
       <p style = "font-size: 45px">
         What do you want to eat?
@@ -111,13 +131,6 @@ oke
         Choose the <span style = "font-weight: bold; font-size: 17px">ONE</span> you crave the most!
       </p>
     </div>
-    
-<!--     <div class = "personno">
-      <p>
-        Person __
-        <!--     <pre id="log">
-      </p>
-    </div> -->
     
     <div class = "list-food">
       <form id = "list-food">
@@ -147,15 +160,39 @@ oke
        ???? 
     </h1>
 
-  </div>
+  	</div>
+	
+	<div class = "restaurant-found" style = "display:none; text-align:center">
+			<h3>
+				Your Suggested Restaurant is <br> <span style = "font-weight: bold; font-size: 45px; font-family: monospace" >Kyoto Beach</span>
+			</h3>
+			<span style = "font-size: 10 px; display:inline">
+				<i>Address: 2393 Shattuck Ave</i>
+			</span>
+			
+			<div class = "menu-section" style = "text-align: center;background-color: #F4F8FE;">
+				<h2 style = "margin-top: 2%;font-family: cursive; font-style: oblique;"> Menu </h3>
+				<span style = "font-family: cursive">
+					<div id = "menu">
+						<label><input type="checkbox" value="Avacado Bread" name="menu-cb" id=menu1> Avacado Bread</label><br>
+						<label><input type="checkbox" value="Tuna Salad" name="menu-cb" id=menu2> Tuna Salad</label><br>
+						<label><input type="checkbox" value="Steak" name="menu-cb" id=menu3> Steak</label><br>
+						<label><input type="checkbox" value="Sushi - California Roll" name="menu-cb" id=menu4> Sushi - California Roll</label>
+          </div>  
+				</span>
+				<br>
+				<button type="button" id = menuSubmit>Confirm</button>
+			</div>
+		</div>
+	
   </body>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript">
     $(document).ready(()=>{  
       
-     $('input[type=checkbox]').on('change', function (e) {
+     $("input[name='food']").on('change', function (e) {
           console.log("asdfasdfasdfasdf")
-          if ($('input[type=checkbox]:checked').length > 2) {
+          if ($("input[name='food']:checked").length > 2) {
               $(this).prop('checked', false);
               alert("Please only select your top two choices");
           }
@@ -165,11 +202,24 @@ oke
      var id = Math.floor(Math.random() * 10000) + 1 // don't delete this
      var dictMe = {}; // nor this
      // getting the URL (you may want to use for Exercise 3)
-    var url = window.location.href;
+      
+
+//     var url = window.location.href;
+		var menuPage = (window.location.href.split('='))[1];
     //initialize the socket  
     var socket = new WebSocket('wss://Choose-Restaurant-with-Ease-jach866608.codeanyapp.com/ws/draw');
-
-            
+      
+			
+			$("#vcheck").click(function(){
+				$('.variant-select').hide();
+				$('.first-filter').show();
+			});
+			
+			$("#vtype").click(function(){
+				$('.variant-select').hide();
+				$('.first-filter-text').show();
+			});
+			
       $("#secondSubmit").click(function(){
           var favorite = [];
           $.each($("input[name='food']:checked"), function(){
@@ -177,7 +227,7 @@ oke
           });
           let msg = {page: "second", id:id,food1:favorite[0],food2:favorite[1]} //let is block-scoped
           socket.send(JSON.stringify(msg));
-          console.log("message ")
+          console.log("message")
       });
       
       
@@ -187,26 +237,37 @@ oke
         var numbPpl = 3;
         var firstForm = document.querySelector("#list-food");
         var firstChoice = [];
-
+      
         //first-filtering
         function openPage() {
           let msg = {page: "first",id:id};
           console.log(msg);
           socket.onopen = () => socket.send(JSON.stringify(msg)); // tell server that a new user comes in //???
         }
-
       openPage();
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
         console.log("radiovalue = " + radioValue);
         dictMe[id] = true;
-        console.log("line 241: id %s in dictMe = %s ", id, dictMe[id]);
+
         let msg = {page: "first", fc: radioValue, id: id};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
       });
+			
+			//text-box
+      $("#first-text").click(function(){
+        var textInput = document.getElementById('firsttext').value;
+        console.log("textInput = " + textInput);
+        dictMe[id] = true;
 
+        let msg = {page: "first", fc: textInput, id: id};
+        socket.send(JSON.stringify(msg));
+        event.preventDefault();
+      });
+			
+      var foodSet3 = new Set();
       // gather information
       socket.onmessage = function(receivedMessage){
         let msg = JSON.parse(receivedMessage.data);
@@ -214,35 +275,66 @@ oke
 				if (msg.page == "first") {
           if (!(msg.id in dictMe)){
             dictMe[msg.id] = false;
-            console.trace();
-            console.log("id should not be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
-          } else if (typeof msg.fc !== 'underfined'){ // check if submit button is pressed
+						
+          } else if (typeof msg.fc !== 'undefined'){ // check if submit button is pressed
               firstChoice.push(msg.fc); // save first-choice-food into array
-              console.log("firstChoice length = " + firstChoice.length);
-              console.trace();
-              console.log("id should be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
+              
+              foodSet3.add(msg.fc);
+            
+              
               if (firstChoice.length >= numbPpl){
                 console.log("switch page to second filter");
                 
                 
                 console.log(firstChoice)
-                
-                var set = new Set(firstChoice)                
-                for(var food of set){
+             
+                for(var food of foodSet3){
                   addFood(food)
                 }
-
+                
+								$('.first-filter-text').hide();
                 $('.first-filter').hide();
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
-                // transfer page
+                
+                
+                var arr = [...foodSet3]
+                console.log(arr)
+                let msg = {page:"third",currSet : arr}
+                socket.send(JSON.stringify(msg));
+                
+                
               } else if (dictMe[msg.id] == true){ // wait for other incoming messages
                 console.log("msg.id = " + msg.id);
+								$('.first-filter-text').hide();
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
             }
-        } else { // second page
+        } else if(msg.page=="third"){
+          foodSet3 = msg.currSet
+           if ($('#foodlist').children().length == 0){
+             for (var food of foodSet3){
+                   addFood(food)
+             }
+           }
+                $('.first-filter').hide();
+                $('.waiting-for-others').hide();
+                $('.second-filter').show();
+
+          
+        } else if (msg.page == "menu"){
+// 					$("#menu1").html(document.getElementById('menu1').checked=true);
+					if (msg.item == "menu1")
+						document.getElementById('menu1').checked = true;
+					if (msg.item == "menu2")
+						document.getElementById('menu2').checked = true;
+					if (msg.item == "menu3")
+						document.getElementById('menu3').checked = true;
+					if (msg.item == "menu4")
+						document.getElementById('menu4').checked = true;
+			  }else {
+          // second page
            console.log("here it gets real")
 //             let msg = JSON.parse(receivedMessage.data);
             dictMe[msg.id] = []
@@ -257,56 +349,78 @@ oke
                  counterMeFood[dictMe[id][i]] = (counterMeFood[dictMe[id][i]] || 0) + 1;
               }
             }
-           console.log(counterMeFood)
-           maxFood = "";
-           maxCounter = 0;
-            for (var id in counterMeFood){
-              console.log(id)
-              if ((id !== 'undefined') && (counterMeFood[id] > maxCounter)){
-                maxFood = id
-                maxCounter = counterMeFood[id]
-              }
-            }
-            $("#topfood").html("The Top Food Selected is: " + maxFood)
+						 console.log(counterMeFood)
+						 maxFood = "";
+						 maxCounter = 0;
+							for (var id in counterMeFood){
+								console.log(id)
+								if ((id !== 'undefined') && (counterMeFood[id] > maxCounter)){
+									maxFood = id
+									maxCounter = counterMeFood[id]
+								}
+							}
+							$("#topfood").html("The Top Food Selected is: " + maxFood)
           }
+				
+					if (menuPage == 'menu') {
+					$('.variant-select').hide();
+					$('.second-filter').hide();
+					$('.restaurant-found').show();
+				}
       };
+			
+			$("#menu1").click(function(){
+//         var menu = ($("input[name=menu-cb]:checked").val());
+// 				console.log("menu1 "+menu);
+
+        let msg = {page: "menu", item: "menu1"};
+        socket.send(JSON.stringify(msg));
+//         event.preventDefault();
+      });
+			$("#menu2").click(function(){
+        let msg = {page: "menu", item: "menu2"};
+        socket.send(JSON.stringify(msg));
+      });
+			$("#menu3").click(function(){
+        let msg = {page: "menu", item: "menu3"};
+        socket.send(JSON.stringify(msg));
+      });
+			$("#menu4").click(function(){
+        let msg = {page: "menu", item: "menu4"};
+        socket.send(JSON.stringify(msg));
+      });
       
       
       function addFood(newName) {
-
           var checkbox = document.createElement('input');
           checkbox.type = "checkbox";
           checkbox.name = "food";
           checkbox.value = newName;
-
           var label = document.createElement('label')
           label.htmlFor = "id";
           label.appendChild(document.createTextNode(newName));
-
-
           $('#foodlist').append(checkbox);
           $('#foodlist').append(label);
       };
-      
-      
-
-
-           
-      
- 
+			
+// 			function addMenu(newName) {
+//           var menu = document.createElement('input');
+//           menu.type = "checkbox";
+//           menu.name = "menu-cb";
+//           checkbox.value = newName;
+//           var label = document.createElement('label')
+//           label.htmlFor = "id";
+//           label.appendChild(document.createTextNode(newName));
+//           $('#menu').append(checkbox);
+//           $('#menu').append(label);
+//       };
       
       
 //     // notify console if socket closes unexpectedly
 //     socket.onclose = function(e) {
 //      console.error('Socket closed unexpectedly');
 //     };
-
-
-
-
     });       
             
             
-  </script>
-  
-</html>
+  </script> 
