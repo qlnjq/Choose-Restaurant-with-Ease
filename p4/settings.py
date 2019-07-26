@@ -25,7 +25,7 @@ SECRET_KEY = '*6t50m_p^gif@4sz!590)u_!#9c-u8l9+7-v+*_op=v^#7wkv9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['p3-websockets-qlnjq-jach866608.codeanyapp.com']
+ALLOWED_HOSTS = ['Choose-Restaurant-with-Ease-jach866608.codeanyapp.com']
 
 
 # Application definition

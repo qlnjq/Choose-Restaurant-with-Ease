@@ -4,141 +4,312 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>P4 Drawing</title>
+    <title>Choose Restaurant with Ease</title>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'draw/vendor/bootstrap/css/bootstrap.min.css' %}">
-    <script type="text/javascript" src="{% static 'draw/vendor/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'draw/vendor/paper/paper-full.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!--     <script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <style type="text/css">
+      body {
+        background-color: "LightGreen";
+      }
+      
+      .choosefirstchoice {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-content: center;
+      }
+      
+      .title {
+        margin-top: 15%;
+        text-align: center;
+      }
+      
+/*       .personno {
+        text-align: center;
+        color: "black";
+        font-size: px;
+      } */
+      
+      .list-food {
+        padding-left: 43%;
+/*         color: "" */
+/*         font-size: px; */
+        
+      }
+      
+      #first-choice {
+        width: 22%;
+        display: flex; /* makes them all in one line after each other*/
+        justify-content: space-between; /* information/content inside that line*/
+        align-items: center;
+        align-content: space-around;
+      }
     </style>
 
 </head>
+<!--Chat
+What page is this? the initial page, i was thinkging we can jsut make a bunch of containers and 
+then hide them when a button is clicked
+hahhaha ya we can do that
+but how do you let the websocket stay connected in that case?
+i think i saww sb asking on piazza
+LLOl so complicated can we make new page for 2nd
+
+Yeha i don tknow how this django thing works let me see
+Give me the link to this page PLEASE
+
+https://piazza.com/class/jux2cw25k294wq?cid=402
+
+
+I need the index.html file lOL... 
+this is the index,html
+Yeah i want to try" stuff.. it'l get messy if i do it here
+
+ok nw just do it its fine
+oke
+-->
+
 <body>
-    <!-- You may change the dimensions of this canvas -->
-    <canvas id="myCanvas" width="750px" height="750px"></canvas>
-</body>
-<script>
-    // setting up the canvas and one paper tool
-    var canvas = document.getElementById('myCanvas');
-    paper.setup(canvas);
-    var tool = new paper.Tool();
-    // getting the URL (you may want to use for Exercise 3)
-//     var size = window.location.href;
-    var size = (window.location.href.split('='))[1];
-    //<your url>:8000/draw/?size=small vs <your url>:8000/draw/?size=large
-//     var split = size.split('=');
-// //     console.log(split);
-//     size = split[1];
-//     console.log(size);
+  <!--  https://css-tricks.com/snippets/css/a-guide-to-flexbox/    -->
+<!--  choose how many people eating === hardcode this part -->
+  
+<!--   <div class = "number-of-ppl">
+    <div class = "title">
+      <h1>
+        Enter the number of people eating together
+      </h1>
+      <form>
+        <input type = "text"
+      </form>
+    </div>
+  </div> -->
+  <div class = "waiting-for-others" style = "display: none; padding: 20%">
+    <p style = "font-size: 50px; text-align: center">
+      PLEASE WAIT FOR OTHERS TO COMPLETE
+    </p>
+  </div>
+  
+<!--   choose first choice === first selection page -->
+  <div class = "first-filter">
+    <div class = "title">
+      <p style = "font-size: 45px">
+        What do you want to eat?
+      </p>
+      <p style = "font-size: 17px">
+        Choose the <span style = "font-weight: bold; font-size: 17px">ONE</span> you crave the most!
+      </p>
+    </div>
     
-    var socket = new WebSocket('wss://p3-websockets-qlnjq-jach866608.codeanyapp.com/ws/draw');
+<!--     <div class = "personno">
+      <p>
+        Person __
+        <!--     <pre id="log">
+      </p>
+    </div> -->
     
-    var date = new Date();
-    var seconds = date.getSeconds();
-    var user = Date.now();
-    var users = {};
+    <div class = "list-food">
+      <form id = "list-food">
+        <!--    https://www.w3schools.com/html/html_form_input_types.asp      -->
+        <label for="sushi" id = "first-choice">Sushi <input type="radio" name="first-choice" value="Sushi"> </label>
+        <label for="curry" id = "first-choice">Curry <input type="radio" name="first-choice" value="Curry"> </label>
+        <label for="chicken" id = "first-choice">Chicken <input type="radio" name="first-choice" value="Chicken"> </label>
+        <label for="soup" id = "first-choice">Soup <input type="radio" name="first-choice" value="Soup"> </label>
+        <label for="shrimp" id = "first-choice">Shrimp <input type="radio" name="first-choice" value="Shrimp"> </label>
+        <label for="burger" id = "first-choice">Burger <input type="radio" name="first-choice" value="Burger"> </label>
+        <br>
+        <button type="button" name = "first-choice" id = firstSubmit> Submit </button>
+      </form>
+    </div>
+    
+  </div>
+    <div class = "second-filter" style = "display:none">  
+     <form>
+        <h3>Select your favorite foods:</h3>
+        <label><input type="checkbox" value="sushi" name="food"> sushi</label>
+        <label><input type="checkbox" value="curry" name="food"> curry</label>
+        <label><input type="checkbox" value="meatball" name="food"> meatball</label>
+        <label><input type="checkbox" value="tofu" name="food"> tofu</label>
+        <label><input type="checkbox" value="friedrice" name="food"> friedrice</label>
+        <label><input type="checkbox" value="spaghetti" name="food"> spaghetti</label>
+        <br>
+        <button type="button" id = secondSubmit>Get Values</button>
+    </form>
+    <h1 id="topfood">
+       ????
+    </h1>
   
-    function color(){
-      var currColor = '';
-      while(currColor.length < 6){
-        currColor += Math.floor(Math.random() * seconds).toString(16);
-      }
-      return '#' + currColor;
-    }
-  
-    var line = new paper.Path({
-            strokeColor: color(),
-            strokeWidth: 3,
-    });
-  
-    tool.onMouseMove = function(event){
+  </div>
+  </body>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(()=>{  
       
-        var pointx = event.point.x;
-        var pointy = event.point.y;
-        line.add(event.point); //add to client page, not sent to server yet
-//         line.add(new paper.Point(pointx, pointy)); //initial point;
-//         console.log(line.strokeColor);
-        var jsonPoint = JSON.stringify( {'x': pointx, 'y': pointy, 'currUser': user, 'currColor': line.strokeColor._canvasStyle} );
-//         compareThreshold();
-        socket.send(jsonPoint); // client send to server
-    };
-  
-    // triggered when receiving a message from the server
-    socket.onmessage = function(receivedMessage) {
-         var receivedInfo = JSON.parse(receivedMessage.data);
-         var pointx = receivedInfo.x;
-         var pointy = receivedInfo.y;
-         var currUser = receivedInfo.currUser;
-//          var currColor = receivedInfo.currColor; 
- 
-         if (size != 'small'){ // multiple lines
-             if (!(currUser in users)){
-               users[currUser] = new paper.Path();
-               users[currUser].strokeColor = receivedInfo.currColor;
-               users[currUser].strokeWidth = 3;
-             }
-               users[currUser].add(new paper.Point(pointx, pointy));
-         }
-    };
-  
-    // use when sending a message to the server
-    // to be broadcasted to all clients, please add a delay
-//     socket.onopen = () => socket.send(JSON.stringify(..);
-    var threshold = 10;
-    var iX, iY, aX, aY, iZ, aZ, diff,g = 0;
-  
-    // https://developers.arcgis.com/javascript/3/jssamples/mobile_shake.html;
-    window.addEventListener('devicemotion', (event) => {
-      aX = event.accelerationIncludingGravity.x;
-      aY = event.accelerationIncludingGravity.y;
-      aZ = event.accelerationIncludingGravity.z;
-      compareThreshold();
-    });
-  
-    function compareThreshold(){
-      diff = Math.abs(aX - iX + aY - iY + aZ - iZ);
-//       console.log("diff: " + diff);
-      if (diff > threshold){
-        if (line != null) {
-          var saveColor = line.strokeColor._canvasStyle;
-        }
-        var context = canvas.getContext('2d');
-//         context.clearRect(0, 0, canvas.width, canvas.height); // does not clear?? because not canvas paths but paper paths...?
-//         users[user].remove();
-//         paper.project.clear();
-        paper.project.activeLayer.removeChildren();
-//         paper.view.draw();
-//         line.remove();
-        line = new paper.Path({
-              strokeColor: saveColor,
-              strokeWidth: 3});
-        
-//         paper.setup(canvas);
-//         users[user] = new paper.Path({
-//             strokeColor: saveColor(),
-//             strokeWidth: 3,
-//         });
-      }
+     //create unique id
+     var id = Math.floor(Math.random() * 10000) + 1 // don't delete this
+     var dictMe = {}; // nor this
+     // getting the URL (you may want to use for Exercise 3)
+    var url = window.location.href;
+    //initialize the socket  
+    var socket = new WebSocket('wss://Choose-Restaurant-with-Ease-jach866608.codeanyapp.com/ws/draw');
+
+      $('input[type=checkbox]').on('change', function (e) {
+          if ($('input[type=checkbox]:checked').length > 2) {
+              $(this).prop('checked', false);
+              alert("Please only select your top two choices");
+          }
+      });
+            
+      $("#secondSubmit").click(function(){
+          var favorite = [];
+          $.each($("input[name='food']:checked"), function(){
+              favorite.push($(this).val());
+          });
+          alert("My two favourite food are: " + favorite.join(", "));
+          let msg = {page: "second", id:id,food1:favorite[0],food2:favorite[1]} //let is block-scoped
+          socket.send(JSON.stringify(msg));
+          console.log("message ")
+      });
       
-      iX = aX;
-      iY = aY;
-      iZ = aZ;
-    }
+            //if large
+//       if (url.indexOf('large') !== -1 ) {
+//        socket.onmessage = function(receivedMessage) {
+//          console.log("here it gets real")
+//          let msg = JSON.parse(receivedMessage.data);
+//          console.log(msg)
+//          if (msg.id in dictMe){
+//           dictMe[msg.id] = []
+//           dictMe[msg.id].push(msg.food1)
+//           dictMe[msg.id].push(msg.food2)
+//          }else{
+//           dictMe[msg.id] = []
+//           dictMe[msg.id].push(msg.food1)
+//           dictMe[msg.id].push(msg.food2)  
+//          } 
+         
 
-    window.addEventListener('deviceorientation', (event) => {
-        if ((event.gamma - g) > 40){ //change the stroke color
-           line.strokeColor = paper.Color.random(); // color() is too funky
-//            if (users[user] != null) {
-             users[user].strokeColor._canvasStyle = line.strokeColor._canvasStyle;
-//            }
+//           var counterMeFood = {}
+//           //get the top food
+//           for (var id in dictMe){
+//              for (var i = 0; i < 2; i++) {
+//                counterMeFood[dictMe[id][i]] = (counterMeFood[dictMe[id][i]] || 0) + 1;
+//             }
+//           }
+//          console.log(counterMeFood)
+//          maxFood = "";
+//          maxCounter = 0;
+//           for (var id in counterMeFood){
+//             console.log(id)
+//             if (counterMeFood[id] > maxCounter){
+//               maxFood = id
+//               maxCounter = counterMeFood[id]
+//             }
+//           }
+//           $("#topfood").html(maxFood)
+//        } 
+//       };
+      
+      
+//        ..first filtering 
+//        https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio
+//        https://eloquentjavascript.net/2nd_edition/18_forms.html
+        var numbPpl = 3;
+        var firstForm = document.querySelector("#list-food");
+        var firstChoice = [];
+
+        //first-filtering
+        function openPage() {
+          let msg = {page: "first", id: id};
+          console.log(msg);
+          socket.onopen = () => socket.send(JSON.stringify(msg)); // tell server that a new user comes in //???
+          console.log("userid = " + id);
         }
-    });
-    // notify console if socket closes unexpectedly
-    socket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+
+      openPage();
+      
+      $("#firstSubmit").click(function(){
+        var radioValue = ($("input[name=first-choice]:checked").val());
+        console.log("radiovalue = " + radioValue);
+        dictMe[id] = true;
+        console.log("line 241: id %s in dictMe = %s ", id, dictMe[id]);
+        let msg = {page: "first", fc: radioValue, id: id};
+        socket.send(JSON.stringify(msg));
+        event.preventDefault();
+      });
+      
+      // gather information
+      socket.onmessage = function(receivedMessage){
+        let msg = JSON.parse(receivedMessage.data);
+       
+        if (msg.page == "first") {
+          if (!(msg.id in dictMe)){
+            dictMe[msg.id] = false;
+            console.trace();
+            console.log("id should not be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
+          } else if (typeof msg.fc !== 'underfined'){ // check if submit button is pressed
+              firstChoice.push(msg.fc); // save first-choice-food into array
+              console.log("firstChoice length = " + firstChoice.length);
+              console.trace();
+              console.log("id should be in dictMe: id %s in dictMe = %s ", msg.id, dictMe[msg.id]);
+
+              if (firstChoice.length >= numbPpl){
+                console.log("switch page to second filter");
+                $('.first-filter').hide();
+                $('.waiting-for-others').hide();
+                $('.second-filter').show();
+                // transfer page
+              } else if (dictMe[msg.id] == true){ // wait for other incoming messages
+                console.log("msg.id = " + msg.id);
+                $('.first-filter').hide();
+                $('.waiting-for-others').show();
+              }
+          }
+        } else { // second page
+           console.log("here it gets real")
+//             let msg = JSON.parse(receivedMessage.data);
+
+            dictMe[msg.id] = []
+            dictMe[msg.id].push(msg.food1)
+            dictMe[msg.id].push(msg.food2)  
+          
+          
+            var counterMeFood = {}
+            //get the top food
+            for (var id in dictMe){
+               for (var i = 0; i < 2; i++) {
+                 counterMeFood[dictMe[id][i]] = (counterMeFood[dictMe[id][i]] || 0) + 1;
+              }
+            }
+           console.log(counterMeFood)
+           maxFood = "";
+           maxCounter = 0;
+            for (var id in counterMeFood){
+              console.log(id)
+              if ((id !== 'undefined') && (counterMeFood[id] > maxCounter )){
+                maxFood = id
+                maxCounter = counterMeFood[id]
+              }
+            }
+            $("#topfood").html(maxFood)
+          }
+      };
+      
+//     // notify console if socket closes unexpectedly
+//     socket.onclose = function(e) {
+//      console.error('Socket closed unexpectedly');
+//     };
 
 
-</script>
+
+
+    });       
+            
+            
+  </script>
+  
 </html>
