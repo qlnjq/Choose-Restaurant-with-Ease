@@ -164,7 +164,7 @@ oke
 	
 	<div class = "restaurant-found" style = "display:none; text-align:center">
 			<h3>
-				Your Suggested Restaurant is <br> <span style = "font-weight: bold; font-size: 45px; font-family: monospace" >Kyoto Beach</span>
+				Your Suggested Nearby Restaurant is <br> <span style = "font-weight: bold; font-size: 45px; font-family: monospace" >Kyoto Beach</span>
 			</h3>
 			<span style = "font-size: 10 px; display:inline">
 				<i>Address: 2393 Shattuck Ave</i>
@@ -325,15 +325,35 @@ oke
           
         } else if (msg.page == "menu"){
 // 					$("#menu1").html(document.getElementById('menu1').checked=true);
-					if (msg.item == "menu1")
-						document.getElementById('menu1').checked = true;
-					if (msg.item == "menu2")
-						document.getElementById('menu2').checked = true;
-					if (msg.item == "menu3")
-						document.getElementById('menu3').checked = true;
-					if (msg.item == "menu4")
-						document.getElementById('menu4').checked = true;
-			  }else {
+					if (msg.item == "menu1"){
+						if (document.getElementById('menu1').checked == true){
+							document.getElementById('menu1').checked = false;
+						} else {
+							document.getElementById('menu1').checked = true;
+						}
+					}
+					if (msg.item == "menu2"){
+						if (document.getElementById('menu2').checked == true){
+							document.getElementById('menu2').checked = false;
+						} else {
+							document.getElementById('menu2').checked = true;
+						}
+					}
+					if (msg.item == "menu3"){
+						if (document.getElementById('menu3').checked == true){
+							document.getElementById('menu3').checked = false;
+						} else {
+							document.getElementById('menu3').checked = true;
+						}
+					}
+					if (msg.item == "menu4"){
+						if (document.getElementById('menu4').checked == true){
+							document.getElementById('menu4').checked = false;
+						} else {
+							document.getElementById('menu4').checked = true;
+						}
+					}
+			  } else {
           // second page
            console.log("here it gets real")
 //             let msg = JSON.parse(receivedMessage.data);
@@ -375,19 +395,22 @@ oke
 
         let msg = {page: "menu", item: "menu1"};
         socket.send(JSON.stringify(msg));
-//         event.preventDefault();
+        event.preventDefault();
       });
 			$("#menu2").click(function(){
         let msg = {page: "menu", item: "menu2"};
         socket.send(JSON.stringify(msg));
+				event.preventDefault();
       });
 			$("#menu3").click(function(){
         let msg = {page: "menu", item: "menu3"};
         socket.send(JSON.stringify(msg));
+				event.preventDefault();
       });
 			$("#menu4").click(function(){
         let msg = {page: "menu", item: "menu4"};
         socket.send(JSON.stringify(msg));
+				event.preventDefault();
       });
       
       
