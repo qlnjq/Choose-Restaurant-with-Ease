@@ -200,10 +200,8 @@ oke
       
       $("#firstSubmit").click(function(){
         var radioValue = ($("input[name=first-choice]:checked").val());
-        dictMe[id][0] = true;
-        numbPpl--;
-        console.log("#firstSubmit: numbPpl = %s", numbPpl);
-        let msg = {page: "first", fc: radioValue, id: id, numbPpl: numbPpl, save: false};
+//         console.log("#firstSubmit: numbPpl = %s");
+        let msg = {page: "first", fc: radioValue, id: id};
         socket.send(JSON.stringify(msg));
         event.preventDefault();
       });
@@ -211,48 +209,52 @@ oke
       // gather information
       socket.onmessage = function(receivedMessage){
         let msg = JSON.parse(receivedMessage.data);
-       
+
         if (msg.page == "first") {
+					
           if (!(msg.id in dictMe)) {
-            
-            dictMe[msg.id] = [];
-            dictMe[msg.id].push(true);
-            dictMe[msg.id].push(msg.numbPpl);
+						dictMe[msg.id] = true;
             console.log("saved id");
+					}
+					
+          if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
             
-          } else { // if id is already saved
-            dictMe[msg.id][1] = msg.numbPpl;
-            
-            if (typeof msg.fc !== 'undefined') { // check if submit button is pressed
-            
-              if (msg.save != true){
+//               if (msg.save != true){
                 firstChoice.push(msg.fc); // save first-choice-food into array
-              }
-							
-              if ((firstChoice.length > dictMe[msg.id][1]) && (dictMe[msg.id][1] >= 0)){
+//               }
+							let dictMeLen = Object.keys(dictMe).length;
+              if (dictMeLen == numbPpl){
                 console.log("switch page to second filter");
                 
                 var arrayLength = firstChoice.length;
                 
                 console.log(firstChoice)
-                for (var i = 0; i < arrayLength; i++) {
-                  addFood(firstChoice.shift());
+                var set = new Set(firstChoice)
+//                 console.log(set)
+//                 for (var food in set) {
+//                   console.log(food)
+//                   addFood(food);
+//                 }
+                
+                for (var i = 0; i < firstChoice.length; i++) {
+                    addFood(firstChoice.shift())
                 }
 
                 $('.first-filter').hide();
                 $('.waiting-for-others').hide();
                 $('.second-filter').show();
                 // transfer page
-              } else if (dictMe[msg.id][0] == true) { // wait for other incoming messages
-                socket.send(JSON.stringify({page: "first", numbPpl: dictMe[msg.id][1], id: msg.id, save: true})); /// fc: msg.fc,
+              } else if (dictMe[msg.id] == true) { // wait for other incoming messages
+//                 socket.send(JSON.stringify({page: "first", numbPpl: dictMe[msg.id][1], id: msg.id, save: true})); /// fc: msg.fc,
                 $('.first-filter').hide();
                 $('.waiting-for-others').show();
               }
             }
-          }
+//           }
         } else { // second page
            console.log("here it gets real")
-//             let msg = JSON.parse(receivedMessage.data);
+//         
+          //COMMAND ZZZzZZZZZZZZ... undoooooooooooooo    let msg = JSON.parse(receivedMessage.data);
 
             dictMe[msg.id] = []
             dictMe[msg.id].push(msg.food1)
